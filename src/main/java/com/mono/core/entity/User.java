@@ -32,9 +32,10 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	@Column(nullable=false,unique=true)
+	@Column(nullable = false, unique = true)
 	private String loginName;
 	private String name;
+	@JsonIgnore
 	private String salt;
 	private String password;
 	private int sex;
@@ -45,12 +46,9 @@ public class User implements Serializable {
 	private Date createTime;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@Cascade({CascadeType.ALL})
-	@JoinTable(
-		name = "user_role",
-		joinColumns = {@JoinColumn(name = "userid")},
-		inverseJoinColumns = {@JoinColumn(name = "roleid")}
-		)
+	@Cascade({ CascadeType.ALL })
+	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userid") }, inverseJoinColumns = {
+			@JoinColumn(name = "roleid") })
 	@OrderBy("id ASC")
 	@JsonIgnore
 	private List<Role> roles = new ArrayList<Role>();
@@ -93,6 +91,10 @@ public class User implements Serializable {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+
+	public String getCredentialsSalt() {
+		return loginName + salt;
 	}
 
 	public String getPassword() {
@@ -149,6 +151,10 @@ public class User implements Serializable {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public boolean enabled() {
+		return 0 == this.getStatus();
 	}
 
 }

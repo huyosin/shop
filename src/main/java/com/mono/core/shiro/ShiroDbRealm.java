@@ -15,6 +15,8 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mono.core.entity.Operation;
 import com.mono.core.entity.Permission;
@@ -23,6 +25,8 @@ import com.mono.core.entity.User;
 import com.mono.core.service.UserService;
 
 public class ShiroDbRealm extends AuthorizingRealm {
+	private final static Logger logger = LoggerFactory.getLogger(ShiroDbRealm.class);
+	
 	@Resource(name = "userService")
 	private UserService userService;
 
@@ -48,17 +52,19 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		UsernamePasswordToken authcToken = (UsernamePasswordToken)token;
 		String loginName = authcToken.getUsername();
+		logger.debug("ShiroDbRealm Authentication-loginName:"+loginName);
 		User user = userService.getUserByLoginname(loginName);
 		if(user != null){
-			if(!"0".equals(user.getStatus())){
+			if(user.enabled()){
+				SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
+					loginName, user.getPassword(), ByteSource.Util.bytes(user.getCredentialsSalt()), this.getName());
+				Session session = SecurityUtils.getSubject().getSession();
+				session.setAttribute("user", user);
+				session.setAttribute("userId", user.getId());
+				return authenticationInfo;
+			}else{
 				throw new DisabledAccountException();
 			}
-			SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
-				loginName, user.getPassword(), ByteSource.Util.bytes(user.getSalt()), this.getName());
-			Session session = SecurityUtils.getSubject().getSession();
-			session.setAttribute("user", user);
-			session.setAttribute("userId", user.getId());
-			return authenticationInfo;
 		}else{
 			throw new UnknownAccountException();
 		}

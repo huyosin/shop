@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.mono.core.dao.hibernate.TestDao;
 import com.mono.core.service.TestService;
 import com.mono.core.util.hibernate.Page;
 
@@ -22,6 +23,10 @@ public class TestTest {
 	private static Logger log = LoggerFactory.getLogger(TestTest.class);
 	@Resource
 	private TestService testService;
+	
+
+	@Resource(name="testDaoHibernate")
+	private TestDao testDao;
 //	@Resource
 //	private TestController testController;
 
@@ -101,7 +106,8 @@ public class TestTest {
 	
 	@Test
 	public void testService(){
-		Page<com.mono.core.entity.Test> page = testService.getAllPerPage(1);
+//		Page<com.mono.core.entity.Test> page = testService.getAllPerPage(1);
+		Page<com.mono.core.entity.Test> page = testDao.getAllPerPage(1,10);
 	}
 
 }

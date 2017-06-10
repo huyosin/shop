@@ -21,7 +21,8 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
 		this.baseDao = userDao;
 		this.userDao = (UserDao) userDao;
 	}
-	
+
+	@Override
 	public User getUserByLoginname(String loginName){
 		return userDao.getUserByLoginname(loginName);
 	}

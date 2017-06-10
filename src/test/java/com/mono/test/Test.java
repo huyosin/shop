@@ -2,6 +2,10 @@ package com.mono.test;
 
 import static org.junit.Assert.fail;
 
+import java.security.SecureRandom;
+import java.util.Random;
+
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,6 +30,10 @@ public class Test {
 
 	@org.junit.Test
 	public void test() {
+		Sha256Hash s = new Sha256Hash("liuliang","1");
+		Random random = new SecureRandom();
+		log.debug(random.nextInt()+"");
+		log.debug(s.toString());
 		log.trace("======trace");  
         log.debug("======debug");  
         log.info("======info");  

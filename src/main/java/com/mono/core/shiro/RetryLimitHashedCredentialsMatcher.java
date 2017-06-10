@@ -16,7 +16,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher implements InitializingBean {
 	private final static Logger logger = LoggerFactory.getLogger(RetryLimitHashedCredentialsMatcher.class);
 	
-	private final static String DEFAULT_CHACHE_NAME = "retryLimitCache";
+	private final static String DEFAULT_CHACHE_NAME = "passwordRetryCache";
 	private Cache<String, AtomicInteger> passwordRetryCache;
 	private final CacheManager cacheManager;
 	private String passwordRetryCacheName;
@@ -43,10 +43,10 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
 			retryCount = new AtomicInteger(1);
 			this.passwordRetryCache.put(loginName, retryCount);
 		}
-		if (retryCount.incrementAndGet() > 5) {
-			logger.warn("loginName: " + loginName + " tried to login more than 5 times in period");
-			throw new ExcessiveAttemptsException("登录名: " + loginName + " 密码连续输入错误超过5次，锁定半小时！");
-		}
+//		if (retryCount.incrementAndGet() > 5) {
+//			logger.warn("loginName: " + loginName + " tried to login more than 5 times in period");
+//			throw new ExcessiveAttemptsException("登录名: " + loginName + " 密码连续输入错误超过5次，锁定半小时！");
+//		}
 		boolean matches = super.doCredentialsMatch(authcToken, info);
 		if(matches){
 			passwordRetryCache.remove(loginName);

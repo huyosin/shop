@@ -2,7 +2,7 @@ package com.mono.core.controller;
 
 import javax.annotation.Resource;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,7 @@ public class TestController {
 	private TestService testService;
 
 	@RequestMapping(value = "/getAllPerPage")
-	@RequiresAuthentication
+	@RequiresPermissions("/test/getAllPerPage")
 	public String getAllPerPage(@RequestParam(value="pageNo", required=false) Integer pageNo, Model model) {
 		Page<Test> page = testService.getAllPerPage(pageNo);
 		model.addAttribute("page", page);

@@ -18,8 +18,14 @@
 		<!-- override these for application-specific URLs if you like: 
 		<property name="loginUrl" value="/login.jsp"/>
 		<property name="successUrl" value="/home.jsp"/> 
-		<property name="unauthorizedUrl" value="/unauthorized.jsp"/> 
+		<property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+        <property name="unauthorizedUrl" value="/unauth"/> 
 		-->
+		
+        <!-- 默认的登陆访问url -->
+        <property name="loginUrl" value="/login"/>
+        <!-- 登陆成功后跳转的url -->
+        <property name="successUrl" value="/index"/>
 		<!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean -->
 		<!-- defined will be automatically acquired and available via its beanName in chain -->
 		<!-- definitions, but you can perform instance overrides or name aliases  here if you like: -->
@@ -37,7 +43,9 @@
 		# more URL-to-FilterChain definitions here -->
 		<property name="filterChainDefinitions">
 			<value>
-				<!-- /statics/** = anon -->
+				/statics/** = anon
+                /login = anon
+				 /** = authc
 			</value>
 		</property>
 	</bean>
@@ -65,6 +73,8 @@
 
 	<bean id="credentialsMatcher" class="com.mono.core.shiro.RetryLimitHashedCredentialsMatcher">
 		<constructor-arg ref="ehCacheManager" />
+        <property name="hashAlgorithmName" value="SHA-256"/>
+        <property name="hashSalted" value="true"/>
 	</bean>
 
 	<bean id="ehCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">

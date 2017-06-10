@@ -135,7 +135,7 @@ public class BaseDaoImpl<T extends java.io.Serializable, PK extends java.io.Seri
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> query(Map<String, Object> params) {
-		Criteria criteria = this.getSession().createCriteria(entityClass.getSimpleName());
+		Criteria criteria = this.getSession().createCriteria(entityClass);
 
 		if(params != null){
 			for (String key : params.keySet()) {
@@ -148,7 +148,7 @@ public class BaseDaoImpl<T extends java.io.Serializable, PK extends java.io.Seri
 	@SuppressWarnings("unchecked")
 	@Override
 	public T queryUnique(Map<String, Object> params) {
-		Criteria criteria = this.getSession().createCriteria(entityClass.getSimpleName());
+		Criteria criteria = this.getSession().createCriteria(entityClass);
 
 		if(params != null){
 			for (String key : params.keySet()) {
