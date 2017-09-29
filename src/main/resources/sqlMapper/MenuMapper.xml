@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mono.core.dao.mapper.MenuMapper">
+	<resultMap type="MenuVo" id="menuMap">
+		<id column="id" property="id" />
+		<id column="name" property="name" />
+		<id column="url" property="url" />
+		<id column="pid" property="pid" />
+		<id column="status" property="status" />
+		<id column="type" property="type" />
+		<id column="createTime" property="createTime" />
+		<id column="description" property="description" />
+	      
+	    <!-- 查询子模块 -->  
+	    <collection property="childMenus" column="id" select="getChildMenu" />  
+	</resultMap>
+
+	<select id="getMenuVoByUserId" resultMap="menuMap" parameterType="long">
+		select distinct m.* from user_role ur,role_permission rp,permission_menu pm,menu m 
+			where ur.roleid=rp.roleid and rp.permissionid=pm.permissionid and pm.menuid=m.id and ur.userid=#{userId} and m.status=0 and m.pid=0
+			order by m.id
+    </select>
+    
+	<select id="getMenuVoByLoginName" resultMap="menuMap" parameterType="string">
+		select distinct m.* from user u,user_role ur,role_permission rp,permission_menu pm,menu m 
+			where u.id=ur.userid and rp.roleid=rp.roleid and rp.permissionid=pm.permissionid and pm.menuid=m.id and u.loginname=#{loginName} and m.status=0 and m.pid=0
+			order by m.id
+    </select>
+    
+	<select id="getTopMenuVo" resultMap="menuMap">
+		select m.* from menu m where m.status=0 and m.pid=0 order by m.id
+    </select>
+    
+	<select id="getTopMenu" resultType="Menu">
+		select m.* from menu m where m.status=0 and m.pid=0 order by m.id
+    </select>
+    
+	<select id="getChildMenu" resultMap="menuMap" parameterType="string">
+		select * from menu where status=0 and pid=#{id} order by id
+    </select>
+</mapper>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mono.core.dao.mapper.OperationMapper">
+	<select id="getOperationByLoginName" resultType="com.mono.core.entity.Operation" parameterType="string">
+		select distinct o.* from user u,user_role ur,role_permission rp,permission_operation po,operation o 
+			where ur.userid=u.id and ur.roleid=rp.roleid and rp.permissionid=po.permissionid and po.operationid=o.id and u.loginname=#{loginName} 
+			order by o.id
+    </select>
+</mapper>
