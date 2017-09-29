@@ -1,26 +1,8 @@
 package com.mono.core.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
 public class Operation implements Serializable {
 
 	/**
@@ -28,8 +10,6 @@ public class Operation implements Serializable {
 	 */
 	private static final long serialVersionUID = -8763350216437305307L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
 	private String url;
@@ -38,17 +18,6 @@ public class Operation implements Serializable {
 	private int type;
 	private Date createTime;
 	private String description;
-	
-	@ManyToMany(fetch=FetchType.LAZY)
-	@Cascade({CascadeType.ALL})
-	@JoinTable(
-		name = "permission_operation", 
-		joinColumns = {@JoinColumn(name = "operationid")}, 
-		inverseJoinColumns = {@JoinColumn(name = "permissionid")}
-	)
-	@OrderBy("id ASC")
-	@JsonIgnore
-	private List<Permission> permissions = new ArrayList<Permission>();
 
 	public long getId() {
 		return id;
@@ -113,12 +82,10 @@ public class Operation implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public List<Permission> getPermissions() {
-		return permissions;
-	}
-
-	public void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("ID:").append(this.getId()).append(" Name:").append(this.getName()).append(" Url:").append(this.getUrl()).append(" CreateTime:").append(this.getCreateTime());
+		return sb.toString();
 	}
 }

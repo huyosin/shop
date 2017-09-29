@@ -12,8 +12,13 @@ $(function () {
     // 登录
     $('#loginform').form({
         url: basePath + '/login',
-        success:function(result){
-            window.location.href = basePath + result;
+        success:function(data){
+            var result = JSON.parse(data);
+        	if(result.code == 200){
+        		window.location.href = basePath + "/index";
+        	}else{
+        		showMessage(result.msg);
+        	}
         }
     });
 });

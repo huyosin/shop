@@ -1,9 +1,12 @@
 package com.mono.core.controller;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.DisabledAccountException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mono.core.service.UserService;
+import com.mono.core.util.Result;
 
 @Controller
 public class LoginController {
@@ -33,20 +37,20 @@ public class LoginController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public String login(@RequestParam String loginName, @RequestParam String password) {
+	public Map<String, Object> login(@RequestParam String loginName, @RequestParam String password) {
 		Subject user = SecurityUtils.getSubject();
 		UsernamePasswordToken token = new UsernamePasswordToken(loginName, password);
 		try {
 			user.login(token);
-			return "/index";
+			return Result.success();
 		} catch (UnknownAccountException e) {
-			throw new RuntimeException("账号不存在！", e);
+			return Result.error(e.getMessage());
 		} catch (DisabledAccountException e) {
-			throw new RuntimeException("账号未启用！", e);
+			return Result.error(e.getMessage());
+		} catch (ExcessiveAttemptsException e) {
+			return Result.error(e.getMessage());
 		} catch (IncorrectCredentialsException e) {
-			throw new RuntimeException("密码错误！", e);
-		} catch (Throwable e) {
-			throw new RuntimeException(e.getMessage(), e);
+			return Result.error("密码错误！");
 		}
 	}
 }

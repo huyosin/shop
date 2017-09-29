@@ -43,7 +43,7 @@ public class UserTest {
 		if(userService == null){
 			log.debug("userService:null");
 		}
-		User user = userService.getUserByLoginname("liuliang");
+		User user = userService.getUserByLoginName("liuliang");
 		if(user == null){
 			log.debug("user:null");
 		}else{

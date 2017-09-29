@@ -1,29 +1,34 @@
 package com.mono.core.service.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.mono.core.dao.hibernate.BaseDao;
-import com.mono.core.dao.hibernate.UserDao;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mono.core.dao.mapper.UserMapper;
 import com.mono.core.entity.User;
 import com.mono.core.service.UserService;
 
 @Service("userService")
 @Transactional
-public class UserServiceImpl extends BaseServiceImpl<User, Long> implements UserService {
-	private UserDao userDao;
-	
-	@Resource(name = "userDaoHibernate")
-	@Override
-	public void setBaseDao(BaseDao<User, Long> userDao) {
-		this.baseDao = userDao;
-		this.userDao = (UserDao) userDao;
-	}
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+	@Resource(name = "userMapper")
+	private UserMapper userMapper;
 
 	@Override
-	public User getUserByLoginname(String loginName){
-		return userDao.getUserByLoginname(loginName);
+	public User getUserByLoginName(String loginName){
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("loginName", loginName);
+		List<User> users = userMapper.selectByMap(params);
+		if(users.size()>0){
+			return users.get(0);
+		}else{
+			return null;
+		}
 	}
 }

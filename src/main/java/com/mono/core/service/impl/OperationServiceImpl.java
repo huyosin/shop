@@ -1,22 +1,26 @@
 package com.mono.core.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.mono.core.dao.hibernate.BaseDao;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mono.core.dao.mapper.OperationMapper;
 import com.mono.core.entity.Operation;
 import com.mono.core.service.OperationService;
 
 @Service("operationService")
 @Transactional
-public class OperationServiceImpl extends BaseServiceImpl<Operation, Long> implements OperationService{
-
+public class OperationServiceImpl extends ServiceImpl<OperationMapper, Operation> implements OperationService{
+	@Resource(name = "operationMapper")
+	private OperationMapper operationMapper;
+	
 	@Override
-	@Resource(name = "operationDaoHibernate")
-	public void setBaseDao(BaseDao<Operation, Long> operationDao) {
-		this.baseDao = operationDao;
+	public List<Operation> getOperationByLoginName(String loginName){
+		return operationMapper.getOperationByLoginName(loginName);
 	}
 
 }

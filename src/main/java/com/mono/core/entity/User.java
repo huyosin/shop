@@ -1,27 +1,10 @@
 package com.mono.core.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
 public class User implements Serializable {
 
 	/**
@@ -29,14 +12,12 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = -3408464014423772809L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	@Column(nullable = false, unique = true)
 	private String loginName;
 	private String name;
 	@JsonIgnore
 	private String salt;
+	@JsonIgnore
 	private String password;
 	private int sex;
 	private int age;
@@ -44,22 +25,6 @@ public class User implements Serializable {
 	private int status;
 	private int type;
 	private Date createTime;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@Cascade({ CascadeType.ALL })
-	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userid") }, inverseJoinColumns = {
-			@JoinColumn(name = "roleid") })
-	@OrderBy("id ASC")
-	@JsonIgnore
-	private List<Role> roles = new ArrayList<Role>();
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
 
 	public long getId() {
 		return id;
@@ -155,6 +120,11 @@ public class User implements Serializable {
 
 	public boolean enabled() {
 		return 0 == this.getStatus();
+	}
+	
+	@Override
+	public String toString(){
+		return "id:" + id + " name:" + name + " loginname:" + loginName;
 	}
 
 }

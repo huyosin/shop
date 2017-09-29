@@ -1,22 +1,19 @@
 package com.mono.core.service.impl;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.mono.core.dao.hibernate.BaseDao;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mono.core.dao.mapper.RoleMapper;
 import com.mono.core.entity.Role;
 import com.mono.core.service.RoleService;
 
 @Service("roleService")
 @Transactional
-public class RoleServiceImpl extends BaseServiceImpl<Role, Long> implements RoleService {
-
-	@Override
-	@Resource(name = "roleDaoHibernate")
-	public void setBaseDao(BaseDao<Role, Long> roleDao) {
-		this.baseDao = roleDao;
-	}
+public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements RoleService {
+	@Resource(name = "roleMapper")
+	private RoleMapper roleMapper;
 
 }

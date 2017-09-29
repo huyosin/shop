@@ -14,24 +14,29 @@
 	default-lazy-init="true">	
 
 	<context:component-scan base-package="com.mono">
-		<context:exclude-filter type="regex" expression="com.mono.core.dao.jdbc.*"/>
+		<context:exclude-filter type="regex" expression="com.mono.core.dao.mybatis.*"/>
 	</context:component-scan>
 
 	<context:property-placeholder location="classpath*:database.properties" />
 
 	<!-- 数据库参数 <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
 		<property name="locations"> <list> <value>classpath*:database.properties</value> 
-		</list> </property> </bean> -->
+		</list> </property> </bean>
+	 -->
 
+	<!-- 
 	<bean id="namedParameterJdbcTemplate"
 		class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
 		<constructor-arg ref="dataSource"></constructor-arg>
 	</bean>
+	 -->
 
-	<!-- 数据源 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
+	<!-- 数据源 
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
 		<property name="driverClassName" value="${db.driver}" /> <property name="url" 
 		value="${db.url}" /> <property name="username" value="${db.user}" /> <property 
-		name="password" value="${db.password}" /> </bean> -->
+		name="password" value="${db.password}" /> </bean>
+	 -->
  
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="jdbcUrl" value="${db.url}" />
@@ -40,45 +45,31 @@
 		<property name="driverClass" value="${db.driver}" />
 	</bean>
 
-	<!-- Hibernate配置 -->
-	<!-- bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="namingStrategy">
-			<bean class="org.hibernate.cfg.ImprovedNamingStrategy" />
-		</property>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
-				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
-				<prop key="hibernate.cache.use_query_cache">${hibernate.use_query_cache}</prop>
-				<prop key="hibernate.cache.use_second_level_cache">${hibernate.use_second_level_cache}</prop>
-				<prop key="hibernate.cache.region.factory_class">${hibernate.cache_region_factory_class}</prop>
-				<prop key="net.sf.ehcache.configurationResourceName">${hibernate.ehcache_config_file}</prop>
-				<!-- <prop key="hibernate.current_session_context_class">${hibernate.current_session_context_class}</prop> -->
-			</props>
-		</property>
+	<!-- Spring整合Mybatis -->
+    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动扫描Mapping.xml文件 -->
+        <property name="mapperLocations" value="classpath*:sqlMapper/*.xml" />
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+        <property name="typeAliasesPackage" value="com.mono.core.entity,com.mono.shop.entity" />
+        <property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <bean id="paginationInterceptor" class="com.baomidou.mybatisplus.plugins.PaginationInterceptor" />
+            </array>
+        </property>
+    </bean>
 
-		<!-- 在此包下自动搜索实体对象 -->
-		<property name="packagesToScan">
-			<list>
-				<value>com.mono.entity</value>
-				<value>com.mono.core.entity</value>
-			</list>
-		</property>
+    <!-- MyBatis 动态实现  -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 对Dao 接口动态实现，需要知道接口在哪  -->
+        <property name="basePackage" value="com.mono.core.dao.mapper,com.mono.shop.dao.mapper"/>
+    </bean>
 
-		<!-- <property name="packagesToScan"> <list> <value>com.mono.entity</value> 
-			<value>com.mono.dao</value> <value>com.mono.service</value> </list> </property> -->
-		<!-- <property name="annotatedClasses"> <list> <value>com.mono.model.Bz</value> 
-			</list> </property> -->
-	</bean>
-
-	<!-- 事务管理器配置,单数据源事务 -->
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
+	<!-- 事务管理 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
 
 	<!-- 使用annotation定义事务 -->
 	<tx:annotation-driven transaction-manager="transactionManager" />

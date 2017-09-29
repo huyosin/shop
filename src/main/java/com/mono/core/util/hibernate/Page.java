@@ -1,6 +1,7 @@
 package com.mono.core.util.hibernate;
 
 import java.util.List;
+import java.util.Map;
 
 public class Page<T> implements java.io.Serializable {
 	private static final long serialVersionUID = 5633829940236061195L;
@@ -14,6 +15,42 @@ public class Page<T> implements java.io.Serializable {
 	private int pageNo;
 
 	private int pageSize;
+	
+	private String sort;
+	
+	private String order;
+	
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
+	}
+
+	public Map<String, Object> getCondition() {
+		return condition;
+	}
+
+	public void setCondition(Map<String, Object> condition) {
+		this.condition = condition;
+	}
+
+	private Map<String, Object> condition;
+
+	public Page(int pageNo, int pageSize) {
+		super();
+		this.pageNo = pageNo;
+		this.pageSize = pageSize;
+	}
 
 	public Page(int pageNo, long totalElements, List<T> elements) {
 		super();
@@ -73,6 +110,22 @@ public class Page<T> implements java.io.Serializable {
 
 	public static int getPageStart(int pageNo, int pageSize) {
 		return (pageNo - 1) * pageSize;
+	}
+
+	public boolean hasNext() {
+		return this.pageNo < this.getTotalPages();
+	}
+
+	public boolean hasPrev() {
+		return this.pageNo > 1;
+	}
+
+	public int nextPageNo() {
+		return this.pageNo + 1;
+	}
+
+	public int prevPageNo() {
+		return this.pageNo - 1;
 	}
 
 	@Override

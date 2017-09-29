@@ -1,21 +1,15 @@
 package com.mono.core.service.impl;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.mono.core.dao.hibernate.BaseDao;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mono.core.dao.mapper.PermissionMapper;
 import com.mono.core.entity.Permission;
+import com.mono.core.service.PermissionService;
 
 @Service("permissionService")
 @Transactional
-public class PermissionServiceImpl extends BaseServiceImpl<Permission, Long> implements PermissionService {
-
-	@Override
-	@Resource(name = "permissionDaoHibernate")
-	public void setBaseDao(BaseDao<Permission, Long> permissionDao) {
-		this.baseDao = permissionDao;
-	}
+public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,Permission> implements PermissionService {
 
 }

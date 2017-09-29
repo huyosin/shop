@@ -74,7 +74,10 @@
 	<bean id="credentialsMatcher" class="com.mono.core.shiro.RetryLimitHashedCredentialsMatcher">
 		<constructor-arg ref="ehCacheManager" />
         <property name="hashAlgorithmName" value="SHA-256"/>
-        <property name="hashSalted" value="true"/>
+        <!-- salt是否hashed -->
+        <!-- <property name="hashSalted" value="true"/> -->
+        <!-- 加密迭代次数 -->
+        <property name="hashIterations" value="3"/>
 	</bean>
 
 	<bean id="ehCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">

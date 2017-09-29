@@ -1,36 +1,47 @@
 package com.mono.core.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.mono.core.dao.hibernate.BaseDao;
-import com.mono.core.dao.hibernate.TestDao;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mono.core.dao.mapper.TestMapper;
 import com.mono.core.entity.Test;
 import com.mono.core.service.TestService;
-import com.mono.core.util.hibernate.Page;
 
 @Service("testService")
 @Transactional
-public class TestServiceImpl extends BaseServiceImpl<Test, Integer> implements TestService {
-	private TestDao testDao;
-
-	@Resource(name = "testDaoHibernate")
-	@Override
-	public void setBaseDao(BaseDao<Test, Integer> testDao) {
-		this.baseDao = testDao;
-		this.testDao = (TestDao) testDao;
-	}
+public class TestServiceImpl extends ServiceImpl<TestMapper,Test> implements TestService {
+	@Resource(name = "testMapper")
+	private TestMapper testMapper;
 
 	@Override
 	public Page<Test> queryByIdName(int pageNo, int pageSize, int id, String name) {
+		Page<Test> page = new Page<Test>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("id", id);
 		params.put("name", name);
-		return testDao.queryByIdName(pageNo, pageSize, params);
+		page.setCurrent(pageNo);
+		page.setSize(pageSize);
+		page.setRecords(testMapper.selectPageByMap(page, params));
+		return page;
+	}
+
+	@Override
+	public Page<Test> selectPerPage(Page<Test> page) {
+		List<Test> records = testMapper.selectPageByMap(page, page.getCondition());
+		page.setRecords(records);
+		return page;
+	}
+
+	@Override
+	public List<Test> selectTestByName(String name) {
+		return testMapper.selectTestByName(name);
 	}
 }

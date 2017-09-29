@@ -1,6 +1,6 @@
 truncate table user;
-insert into user(id, login_name, name, password, salt) values(1,"sunxin","sunxin","1","1");
-insert into user(id, login_name, name, password, salt) values(2,"liuliang","liuliang","1","1");
+insert into user(id, loginname, name, password, salt) values(1,"sunxin","sunxin","1","1");
+insert into user(id, loginname, name, password, salt) values(2,"liuliang","liuliang","1","1");
 
 truncate table role;
 insert into role(id, name, orderno) values(1,"admin",1);
@@ -35,10 +35,10 @@ insert into permission_menu(permissionid, menuid) values(2,3);
 insert into permission_menu(permissionid, menuid) values(3,4);
 
 truncate table operation;
-insert into operation(id, name, url) values(1,"operation1","url1");
-insert into operation(id, name, url) values(2,"operation2","url2");
-insert into operation(id, name, url) values(3,"operation3","url3");
-insert into operation(id, name, url) values(4,"operation4","url4");
+insert into operation(id, pid, name, url) values(1,0,"operation1","url1");
+insert into operation(id, pid, name, url) values(2,0,"test","/test/getAllPerPage");
+insert into operation(id, pid, name, url) values(3,0,"operation3","url3");
+insert into operation(id, pid, name, url) values(4,0,"operation4","url4");
 
 truncate table permission_operation;
 insert into permission_operation(permissionid, operationid) values(1,1);

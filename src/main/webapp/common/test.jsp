@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Test Ajax Json</title>
-<%@ include file="${path}/common/base.jsp"%>
+<%@ include file="base.jsp"%>
 
 <script type="text/javascript">
 	/*
@@ -60,7 +60,6 @@
 		});
 	 */
 
-	/*
 	$(function() {
 		$("#getUserMenu").click(function(event) {
 			$.getJSON("/shop/menu/getUserMenu", null, function(response) {
@@ -69,7 +68,6 @@
 			});
 		});
 	});
-	 */
 
 	$(function() {
 		$('#layout_west_tree').tree({
@@ -88,7 +86,8 @@
 				var url = node.attributes;
 				if (url && url.indexOf("http") == -1) {
 					url = '${path}' + url;
-					opts.content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+					//opts.content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+					opts.href=url;
 					addTab(opts);
 				}
 			}
@@ -133,11 +132,9 @@
 
 </head>
 <body class="easyui-layout">
-
-	<!-- <button onclick="getJson()">getjson</button>
+	<button onclick="getJson()">getjson</button>
 	<button id="getUserMenu">getjson</button>
 	<div id="resultdiv"></div>
-	 -->
 
 	<div data-options="region:'north',border:false"
 		style="overflow: hidden;">
@@ -150,9 +147,7 @@
 
 	<div data-options="region:'west',split:true" title="菜单"
 		style="width: 250px; overflow: hidden; overflow-y: auto; padding: 0px">
-		<div class="well well-small" style="padding: 5px 5px 5px 5px;">
 			<ul id="layout_west_tree"></ul>
-		</div>
 	</div>
 
 	<div data-options="region:'center'" style="overflow: hidden;">
@@ -167,6 +162,5 @@
 		style="height: 30px; line-height: 30px; overflow: hidden; text-align: center; background-color: #eee">
 		Copyright © 2017 power by <a href="Mailto:huyosin@sina.com">MonO</a>
 	</div>
-
 </body>
 </html>

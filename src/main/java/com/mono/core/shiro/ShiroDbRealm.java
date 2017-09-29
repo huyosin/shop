@@ -1,6 +1,9 @@
 package com.mono.core.shiro;
 
+import java.util.List;
+
 import javax.annotation.Resource;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -19,9 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mono.core.entity.Operation;
-import com.mono.core.entity.Permission;
-import com.mono.core.entity.Role;
 import com.mono.core.entity.User;
+import com.mono.core.service.OperationService;
 import com.mono.core.service.UserService;
 
 public class ShiroDbRealm extends AuthorizingRealm {
@@ -29,6 +31,9 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	
 	@Resource(name = "userService")
 	private UserService userService;
+	
+	@Resource(name = "operationService")
+	private OperationService operationService;
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -36,12 +41,9 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		User user = (User) session.getAttribute("user");
 		if(user != null){
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-			for(Role role : user.getRoles()){
-				for(Permission permission : role.getPermissions()){
-					for(Operation operation : permission.getOperations()){
-						info.addStringPermission(operation.getUrl());
-					}
-				}
+			List<Operation> operations = operationService.getOperationByLoginName(user.getLoginName());
+			for(Operation operation : operations){
+				info.addStringPermission(operation.getUrl());
 			}
 			return info;
 		}
@@ -53,7 +55,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		UsernamePasswordToken authcToken = (UsernamePasswordToken)token;
 		String loginName = authcToken.getUsername();
 		logger.debug("ShiroDbRealm Authentication-loginName:"+loginName);
-		User user = userService.getUserByLoginname(loginName);
+		User user = userService.getUserByLoginName(loginName);
 		if(user != null){
 			if(user.enabled()){
 				SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
@@ -63,10 +65,12 @@ public class ShiroDbRealm extends AuthorizingRealm {
 				session.setAttribute("userId", user.getId());
 				return authenticationInfo;
 			}else{
-				throw new DisabledAccountException();
+				logger.debug(loginName+"账号未启用！");
+				throw new DisabledAccountException("账号未启用！");
 			}
 		}else{
-			throw new UnknownAccountException();
+			logger.debug(loginName+"账号不存在！");
+			throw new UnknownAccountException("账号不存在！");
 		}
 	}
 
